@@ -1,0 +1,462 @@
+/* ---------------------------------------------------------
+javascript Presidential Word Guess game
+--------------------------------------------------------- */
+
+/* * {
+  box-sizing: border-box;
+} */
+
+/* #content { */
+  /* position: relative; */
+  /* background: url('../images/demoFloor.jpg') top center no-repeat; */
+  /* background-size: contain; */
+  /* margin: 0px 0px 0px 0px; */
+/* } */
+
+/* .com/g/1600/900' */
+/* 
+#content:after {
+  content: "";s
+  display: block;
+  padding-top: 56.25%;
+} */
+
+body {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+
+#back-ground {
+  width: 1024px;
+  height: 576px;
+  opacity: 1;
+  
+
+}
+
+
+.box {
+  background-color: rgba(178, 34, 52, .5);
+  color: white;
+  font-size: 30px;
+  font-weight: 400;
+  border-radius: 3%;
+  text-align: center;
+}
+
+#header {
+  position: fixed;
+  width: 1024px;
+  height: 40px;
+  top: 0px;
+  left: 0px;
+  font-size: 36px;
+  font-weight: bold;
+  color: black;
+  line-height: 35px;
+  background-color: rgba(224, 224, 237, 0.5);
+}
+
+#front-runner-top {
+  position: fixed;
+  width: 200px;
+  height: 40px;
+  top: 50px;
+  left: 30px;
+  border-radius: 5px 5px 0px 0px;
+}
+
+#front-runner {
+  position: fixed;
+  width: 200px;
+  height: 120px;
+  top: 90px;
+  left: 30px;
+  border-radius: 0px 0px 5px 5px;
+}
+
+#challenger-top {
+  position: fixed;
+  width: 200px;
+  height: 40px;
+  top: 50px;
+  left: 794px;
+  border-radius: 5px 5px 0px 0px;
+}
+
+#challenger {
+  position: fixed;
+  width: 200px;
+  height: 110px;
+  top: 90px;
+  left: 794px;
+}
+
+
+#contenders-top {
+  position: fixed;
+  width: 900px;
+  height: 40px;
+  top: 230px;
+  left: 62px;
+  border-radius: 5px 5px 0px 0px;
+  background-color: rgba(123, 222, 136, 0.5);
+  color: black;
+  font-weight: bold;
+}
+
+#contenders {
+  position: fixed;
+  width: 900px;
+  height: 110px;
+  top: 270px;
+  left: 62px;
+  border-radius: 0px 0px 5px 5px;
+  background-color: rgba(123, 222, 136, 0.5);
+  color: black;
+
+}
+
+#octogon-top {
+  position: fixed;
+  width: 500px;
+  height: 40px;
+  top: 50px;
+  left: 262px;
+  border-radius: 5px 5px 0px 0px;
+  background-color: rgba(60,59,110,.5);
+}
+
+#octogon {
+  position: fixed;
+  width: 500px;
+  height: 70px;
+  top: 90px;
+  left: 262px;
+  border-radius: 0px 0px 5px 5px;
+  background-color: rgba(60,59,110,.5);
+  font-size: 16px;
+  font-weight: bold;
+  text-align: left;
+  padding: 4px;
+}
+
+#duel {
+  position: fixed;
+  width: 224px;
+  height: 50px;
+  top: 170px;
+  left: 400px;
+  color: black;
+  font-weight: bold;
+  border: red solid 3px;
+  border-radius: 5px;
+  background-color: rgba(224, 224, 237, .5);
+  /* background-color: rgba(250, 242, 4, 0.7); */
+}
+
+#dustbin-top {
+  position: fixed;
+  width: 900px;
+  height: 40px;
+  top: 400px;
+  left: 62px;
+  color: black;
+  border-radius: 5px 5px 0px 0px;
+  background-color: rgba(224, 224, 237, 0.5);
+  font-weight: bold;
+}
+
+#dustbin {
+  position: fixed;
+  width: 900px;
+  height: 110px;
+  top: 440px;
+  left: 62px;
+  color: black;
+  border-radius: 0px 0px 5px 5px;
+  background-color: rgba(224, 224, 237, 0.5);
+}
+
+
+.candidate {
+  width: 100px;
+  height: 90px;
+  border: black solid 2px;
+  border-radius: 3%;
+  float: left;
+  background-color: rgba(252, 252, 252, 0.7);
+  padding: 2px;
+  font-size: 16px;
+  margin-left: 10px;
+  }
+
+  .cand-in-upper-box {
+    margin-left: 50px;
+  }
+
+  .cand-in-dustbin {
+    background-color: rgba(63, 60, 55, 0.7);
+  }
+
+/* .letter {
+  width: 30px;
+  height: 30px;
+  border-style: solid;
+  float: left;
+  padding: 2px;
+  margin: 2px;
+} */
+
+.cand-img {
+  width:65px;
+  height:80px;
+  }
+
+  .button {
+    display: inline-block;
+    padding: 15px 25px;
+    font-size: 24px;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    outline: none;
+    color: #fff;
+    background-color: #4CAF50;
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 9px #999;
+  }
+  
+  .button:hover {background-color: #3e8e41}
+  
+  .button:active {
+    background-color: #3e8e41;
+    box-shadow: 0 5px #666;
+    transform: translateY(4px);
+  }
+
+/* #backdrop-image {
+  background-image: url(../images/demoWI.jpg); */
+  /* background-image: url(../images/demoFloor.jpg);
+  background-image: url(../images/whitehouseStorm.jpg); */
+  /* background-color: #cccccc;
+  height: 800px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: relative;
+} */
+
+/* #header-bar {
+  width: 100%;
+  margin-top: 20px;
+  border-top: 5px solid darkgrey;
+  border-left: 5px solid darkgrey;
+  border-right: 5px solid darkgrey;
+  /* background-image: url(../images/usaFlagBW.jpg); */
+  /* background-color: rgba(60,59,110,.7); */
+  /* background-color:  rgba(178, 34, 52, .9);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size:  32pt;
+  font-weight: bold;
+  text-align: center;
+  color: #ffffff;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 5px;
+  height: 60px;
+  max-width: 678px;
+
+} */
+
+/* #main-div {
+  background-image: url(../images/pres1bw.jpg);
+  background-position: center; 
+  background-repeat: no-repeat; 
+  background-size: cover; 
+  margin-top: 50px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0px;
+  width: 100%;
+  max-width: 678px;
+  height: auto;
+  height: 592px;
+  border: 5px solid darkgrey;
+  
+} */
+ 
+/* #game {
+  position: relative;
+  top: 370px;
+  left: 0px;
+  margin-left: auto;
+  margin-right: auto;
+} */
+
+/* #word-display {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size:  32pt;
+  font-weight: bold;
+  text-align: center;
+  color: #ffffff;
+  background-color: rgba(60,59,110,.7);
+  
+  border: 1px solid #b22234;
+  padding: 3px;
+  margin: 3px;
+  margin: 0px;
+  width: 100%;
+  position: relative;
+  top: 225px;
+  left: 0px;
+}
+ */
+/* #term-display {
+  visibility: hidden;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size:  28pt;
+  font-weight: bold;
+  text-align: center;
+  color: #ffffff;
+  background-color: rgba(178, 34, 52, .7);
+  margin: 0px;
+  width: 100%;
+  position: relative;
+  top: 250px;
+  left: 0px;
+} */
+
+/* p {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size:  14px;
+  text-align: left;
+  color: #ffffff; */
+  /* background-color: #3c3b6e; */
+  /* background-color: rgba(60,59,110,.7);
+  border: 1px solid rgba(178, 34, 52, .7); */
+  /* border: 1px solid #b22234; */
+  /* padding: 3px;
+  margin: 3px;
+  width: 500px;
+} */
+
+/* #letters-used {
+  /* visibility: hidden; */
+  /* font-family: Arial, Helvetica, sans-serif;
+  font-size:  24pt;
+  font-weight: bold;
+  text-align: center;
+  color: #ffffff;
+  background-color: rgba(60,59,110,.7);
+  margin: 0px;
+  width: 100%;
+  position: relative;
+  top: 380px;
+  left: 0px;
+} */ */
+
+/* #message {
+  visibility: hidden;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size:  24pt;
+  font-weight: bold;
+  text-align: center;
+  color: #ffffff;
+  background-color: rgba(60,59,110,.7);
+  margin: 0px;
+  width: 100%;
+  position: relative;
+  top: 334px;
+  left: 0px;
+} */
+
+/* #letters-used {
+  position: relative;
+  top: 450px;
+  left: 0px;
+  width: 500px;
+} */
+
+/* #guess-count {
+  visibility: hidden;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size:  24pt;
+  font-weight: bold;
+  text-align: center;
+  color: #ffffff;
+  background-color: rgba(60,59,110,.7);
+  margin: 0px;
+  width: 33%;
+  position: relative;
+  top: 390px;
+  left: 0px;
+}
+
+#win-count {
+  visibility: hidden;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size:  24pt;
+  font-weight: bold;
+  text-align: center;
+  color: #ffffff;
+  background-color: rgba(60,59,110,.7);
+  margin: 0px;
+  width: 33%;
+  position: relative;
+  top: 358px;
+  left: 224px;
+}
+
+#loss-count {
+  visibility: hidden;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size:  24pt;
+  font-weight: bold;
+  text-align: center;
+  color: #ffffff;
+  background-color: rgba(60,59,110,.7);
+  margin: 0px;
+  width: 33%;
+  position: relative;
+  top: 326px;
+  left: 448px;
+} */
+
+/* #guess-count {
+  position: relative;
+  top: 450px;
+  left: 0px;
+  width: 200px;
+} */
+
+/* #player-letter {
+  position: relative;
+  top: 425px;
+  left: 205px;
+  width: 140px;
+}
+
+#win-count {
+  position: relative;
+  top: 400px;
+  left: 350px;
+  width: 72px;
+}
+#loss-count {
+  position: relative;
+  top: 375px;
+  left: 428px;
+  width: 72px;
+} */
+
+/* #message {
+  position: relative;
+  top: 375px;
+  left: 0px;
+  width: 500px;
+} */
+
+ 
