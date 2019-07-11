@@ -74,3 +74,16 @@ User picks candidate and battles one by one to win nomination.
 
 ### Psuedo Code - notes
 
+1. Global variables
+2. Objects/Methods
+3. Event listeners
+4. Squirrel Tasks (coining this term)   
+    1. things that: 
+        1. I know are needed
+        2. Don't know exactly how to do
+        3. ***Keep popping up in head thus becoming a distraction to overall project
+    2. Remedy:
+        1. go ahead and prototype them in a sandbox or in rough skeleton of the project code
+        2. this becomes a win, adds confidence, is re-usable in actual project and most importantly removes the distraction
+
+    1. For example on RPG homework - would like to prototype function to move any Character html element from any Div to any other Div
