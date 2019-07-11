@@ -12,15 +12,15 @@ User picks candidate and battles one by one to win nomination.
 ## Use Cases
 
 1.  game starts in browser 
-  1. page has transparent boxes over background:  Front-Runner, News Feed, Challenger, Contenders, Candidates
-    1. 8 candidate badges appear in candidates field at bottom of screen - order will be randomized (if coding time permits)
-    2. the candidates will have strength numbers in the form of "Favorable 61%" where percent will relate to "health points"
-      1. each candidate has 3 attribute:  health (shown on badge), campaign offensive effectiveness (unseen) and campaign
+  1.2 page has transparent boxes over background:  Front-Runner, News Feed, Challenger, Contenders, Candidates
+    1.2.1 8 candidate badges appear in candidates field at bottom of screen - order will be randomized (if coding time permits)
+    1.2.2. the candidates will have strength numbers in the form of "Favorable 61%" where percent will relate to "health points"
+      1.2.2.1. each candidate has 3 attribute:  health (shown on badge), campaign offensive effectiveness (unseen) and campaign
          defensive effectiveness (unseen) 
-      2. the three attributes will be randomizes with ranges:  2 weak candidates, 2 low-mid candidates, 2 mid-high and 2 - high;
+      1.2.2.2. the three attributes will be randomizes with ranges:  2 weak candidates, 2 low-mid candidates, 2 mid-high and 2 - high;
          Exact play balance ranges for the attributes is TBD.
-    3. badges will have names at top and head image in middle with nice framework and background
-    5. new feed will have - message:  Welcome to the Democratic Nomination Race - pick yourself a Candidate to play with by clicking it
+    1.2.3. badges will have names at top and head image in middle with nice framework and background
+    1.2.4. new feed will have - message:  Welcome to the Democratic Nomination Race - pick yourself a Candidate to play with by clicking it
 
 2. player clicks candidate
   1. the candidate move from Candidate box to the front-runner box
