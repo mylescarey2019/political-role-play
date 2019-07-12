@@ -51,45 +51,15 @@
 //   $(divToMoveTo).append(badgeToMove);
 //   };
 
-  function moveBadge(badgeObject,targetDivId) {
-    // select the page element - in this case the candidate 
-    // which at is currently coded in HTML as <candidate></candidate>
-    // Use the parameter badgeId to select it and the targetDivID
-    // for where to move it to
-    // presumably use JQuery append method in some manner
-    console.log("in global.moveBadge");
-    console.log("the target badge is: " + badgeObject);
-    console.log("the target div is " + targetDivId);
-    // var badgeToMove = $(targetBadge);
-    var divToMoveTo = $(targetDivId);
-    // var badgeToMove = $("#sanders");
-    // var divToMoveTo = $("#challenger");
-    console.log("the badge we are moving is: " + badgeObject);
-    console.log("the div we are moving to is: " + divToMoveTo);
-    // attempt to move badge
-    // $("#challenger").append($("#sanders"));
-    $(divToMoveTo).append(badgeObject);
-    };
-
-// ---------------------------------------------------------
-// Objects & Methhods:
-// ---------------------------------------------------------
-
-// ---------------------------------------------------------
-// Core Program Flow & Event Listeners:
-// ---------------------------------------------------------
-
-// -------------------------------------------------------------------
-//  *** Start of game flow *** 
-// -------------------------------------------------------------------
-
-
+// click event for candidate badges
 $(".candidate").on("click", function() {
   console.log("in on.click .candidate")
-  var theCandidateElement = $(this);
-  console.log(theCandidateElement);
-  var targetDiv = "#contenders";
-  moveBadge(theCandidateElement, targetDiv);
+  // get Id attr of the badge
+  var badgeId = $(this).attr("id");
+  console.log("The attr id of the badge is " + badgeId);
+  // hard coding the move testing destination
+  var targetDivId = "contenders";
+  moveBadge(badgeId, targetDivId);
   // this is great - next step is to fill out detail
   // need to have awareness of the game state
   // and what candidate was clicked so move or not move
@@ -108,6 +78,62 @@ $(".candidate").on("click", function() {
   // the id seletor as parameters instead of actual candidate object
   // returned from $(this) in the click event function
 });
+
+// move a candidate badge from one div to another
+function moveBadge(targetId,destinationId) {
+  console.log("in global.moveBadge");
+  console.log("the target id " + targetId);
+  console.log("the destination d " + destinationId);
+  $("#" + destinationId).append($("#" + targetId));
+};
+
+// moveBadge("harris","contenders");
+
+ 
+
+
+// ---------------------------------------------------------
+// Objects & Methhods:
+// ---------------------------------------------------------
+
+// ---------------------------------------------------------
+// Core Program Flow & Event Listeners:
+// ---------------------------------------------------------
+
+// -------------------------------------------------------------------
+//  *** Start of game flow *** 
+// -------------------------------------------------------------------
+
+// this is working
+// $(".candidate").on("click", function() {
+//   console.log("in on.click .candidate")
+//   var theCandidateElement = $(this);
+//   console.log(theCandidateElement);
+//   var targetDiv = "#contenders";
+//   moveBadge(theCandidateElement, targetDiv);
+
+// this is working
+// function moveBadge(badgeObject,targetDivId) {
+//   // select the page element - in this case the candidate 
+//   // which at is currently coded in HTML as <candidate></candidate>
+//   // Use the parameter badgeId to select it and the targetDivID
+//   // for where to move it to
+//   // presumably use JQuery append method in some manner
+//   console.log("in global.moveBadge");
+//   console.log("the target badge is: " + badgeObject);
+//   console.log("the target div is " + targetDivId);
+//   // var badgeToMove = $(targetBadge);
+//   var divToMoveTo = $(targetDivId);
+//   // var badgeToMove = $("#sanders");
+//   // var divToMoveTo = $("#challenger");
+//   console.log("the badge we are moving is: " + badgeObject);
+//   console.log("the div we are moving to is: " + divToMoveTo);
+//   // attempt to move badge
+//   // $("#challenger").append($("#sanders"));
+//   $(divToMoveTo).append(badgeObject);
+//   };
+
+
 
 
 // var targetBadge = "#" + "gabbard";

@@ -232,6 +232,10 @@ body {
   font-size: 12px;
 }
 
+.hidden {
+  visibility: hidden;
+}
+
 /* .candidate {
   width: 100px;
   height: 90px;
