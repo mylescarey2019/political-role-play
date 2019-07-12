@@ -40,7 +40,7 @@
 //     4. clicking on own candidate once in front-runner box does nothing
 //     5. note: the Front-runner does not use their defensive effectiveness rating
 
-// 3. player clicks candidate (fyi: they are now all in contender box)
+// 3. player clicks contender (fyi: they are now all in contender box)
 //     1. the candidate moves to the challenger box
 //     2. clickable button appears under News Feed "Campaign Against"
 //     3. news feed changes to "Ready to do political battle with <challenger name>?"  Click "Campaign Against" button"
@@ -104,6 +104,7 @@
 //             1. Name
 //             2. Base attack, current attack, health,      
 //             3. defense
+//             4. isActive
 //         2. Strength arrray: 
 //             1. 2 low, 2 mid-low, 2 mid-high, 2-high
 //         3. Method to generate & randomly assign to candidate arrays
@@ -141,6 +142,30 @@
 // ---------------------------------------------------------
 
 // ----------------------------------------------------------
+// object for Candidates
+// ----------------------------------------------------------
+var candidate = {
+
+  candidateName: ['biden','harris','delaney','williamson','sanders','booker','inslee','gabbard','trump'],
+  candidateIsMovable: [true,true,true,true,true,true,true,true,false],
+  candidateBaseOffense: [0,0,0,0,0,0,0,0,0],
+  candidateBaseDefense: [0,0,0,0,0,0,0,0,0],
+  candidateCurrentOffense: [0,0,0,0,0,0,0,0,0],
+  candidateHealth: [0,0,0,0,0,0,0,0,0],
+
+
+  //     2. Candidate 
+//         1. Candidate arrays (5, element array)
+//             1. Name
+//             2. Base attack, current attack, health,      
+//             3. defense
+//             4. isActive
+
+
+
+};
+
+// ----------------------------------------------------------
 // object for Game
 // ----------------------------------------------------------
 var game = {
@@ -150,16 +175,60 @@ var game = {
   currentGameState: 'pick-candidate',
   playerCandidateId: "",
   opponentId: "",
+  turnResult: "",
+  opponentsRemaining: 7,
 
   // game start up procedure
   startGame: function() {
     console.log("in game.startGame");
     userInterface.diagnosticDump();
     userInterface.displayNewsFeed('Welcome to the campaign for the 2020 Democratic Nomination.  Choose yourself a candidate by clicking one');
+  },
+
+  // perform game turn 
+  executeTurn: function () {
+    console.log("in game.executeTurn");
+    // forcing win during initial testing
+    this.turnResult = "win";
+    if (this.turnResult === "win") {
+      this.opponentsRemaining--;
+      if (this.opponentsRemaining > 0) {
+        var blurb = capitolizeWord(game.opponentId) + "'s favorables have plumented and funds have dried up." +
+        " You are the victor.  Choose the next opponent"
+        userInterface.displayNewsFeed(blurb);
+        this.currentGameState = "round-won";
+      }
+      else {
+        var blurb = capitolizeWord(game.opponentId) + "'s falters at the convention. You have won the Nomination!" 
+                     + "  Are you ready for Election night?"
+        userInterface.displayNewsFeed(blurb);
+        this.currentGameState = "campaign-won";
+        $("#duel").text("Election Night 2020");
+      }
+
+    } 
+    else {
+      var blurb = "Your favorables have sunk, you are broke and have to widthdrawal from the race." +
+      userInterface.displayNewsFeed(blurb);
+      this.currentGameState = "round-lost";
+    };
+  },
+
+  // stage the election night
+  preElection: function () {
+    $("header").text("Welcome to Election Night 2020");
+    userInterface.moveBadge(this.playerCandidateId,"challenger");
+    $("#front-runner").text("Incumbent");
+    userInterface.displayNewsFeed("Trump vs " + capitolizeWord(this.playerCandidateId)
+                          + ".  Polls showing a toss-up.  Start your final efforts.");
+    $("#duel").text("Final Campaigning");
+    $("#contenders").css("visibility","hidden");
+    $("#candidates").css("visibility","hidden");
+    $("#back-ground").attr("src","assets/images/whitehouseStorm.jpg")     
   }
+
 };
 
-// Candidate Object
 
 // ----------------------------------------------------------
 // object for user interface - i.e. the html page elements
@@ -190,37 +259,57 @@ var userInterface = {
   },
 
   // move candidate to Front-Runner box
-  moveCandidateToFrontRunner: function(targetId) {
-    console.log("in userInterface.moveCandidateToFrontRunner"); 
+  moveCandidateToFrontRunnerBox: function(targetId) {
+    console.log("in userInterface.moveCandidateToFrontRunnerBox"); 
     userInterface.moveBadge(targetId,"front-runner");
+    candidate.candidateIsMovable[candidate.candidateName.indexOf(targetId)] = false;
     game.playerCandidateId = targetId;
     // add class to center badge in box
     $("#" + targetId).addClass('cand-in-upper-box');
   },
 
+    // move candidate to Dustbin Box
+    moveCandidateToDustbinBox: function(targetId) {
+      console.log("in userInterface.moveCandidateToDustbinBox"); 
+      userInterface.moveBadge(targetId,"dustbin");
+      candidate.candidateIsMovable[candidate.candidateName.indexOf(targetId)] = false;
+      // add classrd to fade badge in box
+      $("#" + targetId).addClass('cand-in-dustbin');
+      $("#" + targetId).addClass('cand-img-in-dustbin');
+      // remove class that used for upper box
+      $("#" + targetId).removeClass('cand-in-upper-box');
+    },
 
- 
+  // move contender to Challenger box
+  moveContenderToChallengerBox: function(targetId) {
+    console.log("in userInterface.moveContenderToChallengerBox"); 
+    userInterface.moveBadge(targetId,"challenger");
+    game.opponentId= targetId;
+    // add class to center badge in box
+    $("#" + targetId).addClass('cand-in-upper-box');
+    var blurb = 'Are you ready to do political battle with ' +
+                capitolizeWord(targetId) +
+                '?  Use Campaign Against button';
+    userInterface.displayNewsFeed(blurb);
+    userInterface.toggleActionButtonVisibility('show');
+  },
   
+
+
+
   // move remaining candidates to Contenders box 
-  moveCandidatesToContenders: function() {
-    console.log("in userInterface.moveCandidatesToContenders"); 
+  moveCandidatesToContendersBox: function() {
+    console.log("in userInterface.moveCandidatesToContendersBox"); 
     $("#dustbin>candidate").each(function() {
       userInterface.moveBadge(this.id,"contenders");
     });
     // change title of lower box to 'Political Dustbin'
-    $("#dustbin>span").text('Political Dustbin');
+    $("#dustbin-top>span").text('Political Dustbin');
     var blurb = 'Welcome to the campaign ' +
                 capitolizeWord(game.playerCandidateId) + 
-                ' Pick a challenger by clicking on one';
+                '.' + '  Pick a challenger by clicking on one';
     userInterface.displayNewsFeed(blurb);
   },
-
-  // 2. player clicks candidate
-//     1. the candidate move from Candidate box to the front-runner box
-//     2. the remaining candidates move to Contenders box and Candidates box is re-title to "Political Dustbin"
-//     3. news feeds changes to  "now pick a contender to campaign against"
-//     4. clicking on own candidate once in front-runner box does nothing
-//     5. note: the Front-runner does not use their defensive effectiveness rating
 
 
   // display message element
@@ -230,13 +319,12 @@ var userInterface = {
   },
 
   // hide or show the action "button"
-  toggleActionButtonVisibility: function(hide) {
+  toggleActionButtonVisibility: function(action) {
     console.log("in userInterface.hideShowActionButton"); 
-    if (hide === "hide") {
+    if (action === "hide") {
       $("#duel").css("visibility","hidden");
     }
-    else {
-      console.log("in show");
+    else if (action = "show")  {
       $("#duel").css("visibility","visible");
     };
   },
@@ -248,6 +336,7 @@ var userInterface = {
     console.log("player candidate: " + game.playerCandidateId);
     console.log("opponent:" + game.opponentId);
     console.log("game state: " + game.currentGameState);
+    console.log("opponents remaining: " + game.opponentsRemaining);
     console.log("------------------------")
   }
 };
@@ -264,25 +353,82 @@ var userInterface = {
 game.startGame();
 
 
+
+    
+
+
+// for (let i = 0; i < candidate.candidateProfile.length; i++) {
+//   console.log("index = " + i);
+//   console.log("name = " + candidate.candidateProfile[i].name);
+//   console.log("is active = " + candidate.candidateProfile[i].isActive);
+  // console.log("base offense = " + candidate.candidateProfile[i].baseOffense);
+  // console.log("current offense = " + candidate.candidateProfile[i].currentOffense);
+  // console.log("base defense = " + candidate.candidateProfile[i].baseDefense);
+  // console.log("health = " + candidate.candidateProfile[i].health);
+// };
+
+
 // click event for candidate badges
 $(".candidate").on("click", function() {
   console.log("in on.click .candidate")
   // get Id attr of the badge
   var badgeId = $(this).attr("id");
-  // console.log("The attr id of the badge is " + badgeId);
-  // hard coding the move testing destination
+  console.log("The attr id of the badge is " + badgeId);
 
+  if (candidate.candidateIsMovable[candidate.candidateName.indexOf(badgeId)]) {
+    switch (game.currentGameState) {
+      case "pick-candidate": {
+        userInterface.moveCandidateToFrontRunnerBox(badgeId);
+        userInterface.moveCandidatesToContendersBox();
+        game.currentGameState = 'pick-opponent';
+        userInterface.diagnosticDump();
+        break;
+      }
+      case "pick-opponent": {
+        userInterface.moveContenderToChallengerBox(badgeId);
+        game.currentGameState = 'campaign';
+        userInterface.diagnosticDump();
+        break;
+      }      
+      // case "campaign": {
+      //   game.executeTurn();
+      //   userInterface.moveChallengerToDustBinBox(badgeId);
+      //   game.currentGameState = 'pick-opponent';
+      //   break;
+      // } 
+    
+      default:
+        break;
+    };
+  };
+});
+
+// click event for action button
+$("#duel").on("click", function() {
+  console.log("in on.click .duel")
+ 
   switch (game.currentGameState) {
-    case "pick-candidate": {
-      userInterface.moveCandidateToFrontRunner(badgeId);
-      userInterface.moveCandidatesToContenders();
-    }
-      
+    case "campaign": {
+      game.executeTurn();
+      // forcing wins to test story board at this time
+      userInterface.moveCandidateToDustbinBox(game.opponentId);
+      game.currentGameState = 'pick-opponent';
       break;
+    }
+    case "campaign-won": {
+      game.preElection();
+      game.currentGameState = 'pre-election-night';
+      break;
+    }      
+
   
     default:
       break;
   };
+
+
+});
+
 
   // var targetDivId = "contenders";
   // userInterface.moveBadge(badgeId, targetDivId);
@@ -303,6 +449,6 @@ $(".candidate").on("click", function() {
   // so maybe the moveBadge function is best kept using
   // the id seletor as parameters instead of actual candidate object
   // returned from $(this) in the click event function
-});
+
 
 // userInterface.toggleActionButtonVisibility("show");

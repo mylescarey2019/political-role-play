@@ -156,7 +156,7 @@ body {
   text-align: center;
   padding: 3px;
   border-radius: 5px;
-  background-color: rgba(224, 224, 237, .5);
+  background-color: rgba(224, 224, 237, 1);
   /* background-color: rgba(250, 242, 4, 0.7); */
 }
 
@@ -254,6 +254,10 @@ body {
 
   .cand-in-dustbin {
     background-color: rgba(63, 60, 55, 0.7);
+  }
+
+  .cand-img-in-dustbin {
+    opacity: .7;
   }
 
 /* .letter {
