@@ -94,30 +94,30 @@ User picks candidate and battles one by one to win nomination.
  ### - More notes / quick takes
 1. Objects:
     1. Game
+        1. Game state
+            1. Pick front-runner, pick opponent, 
+            2. round lost, round won, campaign lost, 
+            3. campaign won, restart 
+            4. Pre election night , post election night 
+            5. Other election states
+        2. Method to attack 
+        3. Method to check for win/loss of round
+        4. Method to check for win/loss of round
+
+    2. Candidate 
         1. Candidate arrays (5, element array)
             1. Name
             2. Base attack, current attack, health,      
             3. defense
-    2. Game state
-        1. Pick front-runner, pick opponent, 
-        2. round lost, round won, campaign lost, 
-        3. campaign won, restart 
-        4. Pre election night , post election night 
-        5. Other election states
-    2. Candidate template 
-        1. Strength arrray: 2 low, 2 mid-low, 2 
-        2. mid-high, 2 high
-        3. Method to generate & randomly      
-        4. assign to candidate arrays
-    3. Method to attack 
-    4. Method to check for win/loss of round
-    5. Method to check for win/loss of round
+        2. Strength arrray: 
+            1. 2 low, 2 mid-low, 2 mid-high, 2-high
+        3. Method to generate & randomly assign to candidate arrays
 
-    6. User interface 
+    3. User interface 
         1. Method to move badge 
         2. Methods to update box titles
         3. Methods to hide show boxes
         4. Method for button text and show hide 
         5. Methods for news feed
 
-2. Others?
+    4. Others?
