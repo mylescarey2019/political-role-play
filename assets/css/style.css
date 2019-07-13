@@ -85,10 +85,14 @@ body {
   border-radius: 5px 5px 0px 0px;
 }
 
+.outgoing-prez {
+  font-size: 18px;
+}
+
 #challenger {
   position: fixed;
   width: 200px;
-  height: 110px;
+  height: 120px;
   top: 90px;
   left: 794px;
 }
@@ -260,6 +264,12 @@ body {
     opacity: .7;
   }
 
+  .trump-white-house {
+    position: relative;
+    bottom: 105px;
+    left: 530px;
+  }
+
 /* .letter {
   width: 30px;
   height: 30px;
@@ -269,7 +279,7 @@ body {
   margin: 2px;
 } */
 
-
+/* 
   .button {
     display: inline-block;
     padding: 15px 25px;
@@ -291,7 +301,7 @@ body {
     background-color: #3e8e41;
     box-shadow: 0 5px #666;
     transform: translateY(4px);
-  }
+  } */
 
 /* #backdrop-image {
   background-image: url(../images/demoWI.jpg); */

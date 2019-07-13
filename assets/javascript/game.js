@@ -161,7 +161,14 @@ var candidate = {
 //             3. defense
 //             4. isActive
 
-
+setCandidateStats: function() {
+  console.log("in candidates.setCandidatesStats");
+  this.candidateIsMovable = [true,true,true,true,true,true,true,true,false];
+  this.candidateBaseOffense = [0,0,0,0,0,0,0,0,0];
+  this.candidateBaseDefense = [0,0,0,0,0,0,0,0,0];
+  this.candidateCurrentOffense = [0,0,0,0,0,0,0,0,0];
+  this.candidateHealth = [0,0,0,0,0,0,0,0,0];
+}
 
 };
 
@@ -170,62 +177,175 @@ var candidate = {
 // ----------------------------------------------------------
 var game = {
   gameStates: ['pick-candidate','pick-opponent','campaign','round-lost','round-won',
-              'campaign-lost','campaign-won','restart','pre-election-night',
-              'post-election-night'],
-  currentGameState: 'pick-candidate',
+              'campaign-lost','campaign-won','restart','pre-election-night','election-night',
+              'election-lost','election-won'],
+  currentGameState: 'pick-candidate', 
   playerCandidateId: "",
   opponentId: "",
   turnResult: "",
-  opponentsRemaining: 7,
+  opponentsRemaining: 1,
 
   // game start up procedure
   startGame: function() {
     console.log("in game.startGame");
     userInterface.diagnosticDump();
+    $("#contenders-top").css("visibility","hidden");
+    $("#contenders").css("visibility","hidden");
     userInterface.displayNewsFeed('Welcome to the campaign for the 2020 Democratic Nomination.  Choose yourself a candidate by clicking one');
+  },
+
+  // restart a game
+  resetGame: function() {
+    console.log("in game.resetGame");
+    userInterface.diagnosticDump();
+    playerCandidateId = "";
+    opponentId = "";
+    turnResult = "";
+    game.opponentsRemaining = 1;
+    $("#back-ground").attr("src","assets/images/demoFloor.jpg");
+    $("#dustbin-top>span").text('Candidates');
+    userInterface.toggleActionButtonVisibility("hide");
+    // need to gather up the badges and move them to Candidates box and remove the classes
+    $("candidate:not(#trump)").each(function() {
+      $("#" + this.id).removeClass('cand-in-upper-box cand-in-dustbin cand-img-in-dustbin');
+      userInterface.moveBadge(this.id,"dustbin");
+    });
+    $("#challenger-top").removeClass("outgoing-prez");
+    $("#trump").css("visibility","hidden");
+    $("#trump").removeClass("card-in-upper-box");
+    userInterface.moveBadge("trump","trump-home");
+    $("#dustbin-top").css("visibility","visible");
+    $("#dustbin").css("visibility","visible");
+    $("#front-runner-top>span").text("Front-Runner");
+    $("#challenger-top>span").text("Challenger");
+    $("#header>span").text("Road to 2020 - Democratic Showdown");
+    candidate.setCandidateStats();
+    game.currentGameState = 'pick-candidate';
+    userInterface.diagnosticDump();
   },
 
   // perform game turn 
   executeTurn: function () {
     console.log("in game.executeTurn");
     // forcing win during initial testing
-    this.turnResult = "win";
+    if (this.opponentsRemaining === 1) {
+      this.turnResult = "loss"
+    }
+    else {
+      this.turnResult = "win"
+    };
+ 
     if (this.turnResult === "win") {
       this.opponentsRemaining--;
       if (this.opponentsRemaining > 0) {
+        userInterface.moveCandidateToDustbinBox(game.opponentId);
         var blurb = capitolizeWord(game.opponentId) + "'s favorables have plumented and funds have dried up." +
         " You are the victor.  Choose the next opponent"
         userInterface.displayNewsFeed(blurb);
-        this.currentGameState = "round-won";
+        game.currentGameState = 'pick-opponent';
       }
       else {
+        userInterface.moveCandidateToDustbinBox(game.opponentId);
         var blurb = capitolizeWord(game.opponentId) + "'s falters at the convention. You have won the Nomination!" 
                      + "  Are you ready for Election night?"
         userInterface.displayNewsFeed(blurb);
-        this.currentGameState = "campaign-won";
-        $("#duel").text("Election Night 2020");
+        game.currentGameState = "campaign-won";
+        $("#duel>span").text("Election Night 2020");
       }
-
     } 
     else {
-      var blurb = "Your favorables have sunk, you are broke and have to widthdrawal from the race." +
-      userInterface.displayNewsFeed(blurb);
-      this.currentGameState = "round-lost";
+      game.campaignLost();
     };
   },
 
+    // perform election turn 
+    executeElectionTurn: function () {
+      console.log("in game.executeElectionTurn");
+      // forcing win during initial testing
+      this.turnResult = "loss";
+   
+      if (this.turnResult === "win") {
+          game.electionWon();
+        }
+        else {
+          game.electionLost();
+        };
+    },
+
+   // campaign has been lost
+   campaignLost: function () {
+    console.log("in game.campaignLost");
+    userInterface.moveCandidateToDustbinBox(this.playerCandidateId);
+    // userInterface.moveBadge(this.opponentId,"front-runner");
+    var blurb = "Your favorables have sunk, you are broke and have to withdrawal from the race." 
+    + "  Do you want to play again?"
+    game.currentGameState = 'restart';
+    userInterface.displayNewsFeed(blurb);
+    $("#duel>span").text("Play Again");
+  },
+
+
+
   // stage the election night
   preElection: function () {
-    $("header").text("Welcome to Election Night 2020");
+    console.log("in game.preElection");
+    $("header>span").text("Welcome to Election Night 2020");
     userInterface.moveBadge(this.playerCandidateId,"challenger");
-    $("#front-runner").text("Incumbent");
+    $("#front-runner-top>span").text("Incumbent");
+    $("#challenger-top>span").text("Nominee");
     userInterface.displayNewsFeed("Trump vs " + capitolizeWord(this.playerCandidateId)
                           + ".  Polls showing a toss-up.  Start your final efforts.");
-    $("#duel").text("Final Campaigning");
+    $("#duel>span").text("Final Campaigning");
+    $("#contenders-top").css("visibility","hidden");
     $("#contenders").css("visibility","hidden");
-    $("#candidates").css("visibility","hidden");
-    $("#back-ground").attr("src","assets/images/whitehouseStorm.jpg")     
-  }
+    $("#dustbin-top").css("visibility","hidden");
+    $("#dustbin").css("visibility","hidden");
+    $("#back-ground").attr("src","assets/images/whitehouseStorm.jpg");
+    // $("#trump").addClass("trump-white-house")
+    game.opponentId = "trump";
+    $("#" + game.opponentId).css("visibility","visible");   
+    userInterface.moveBadge(game.opponentId,"front-runner"); 
+    $("#" + game.opponentId).addClass("cand-in-upper-box")
+  },
+
+  // start the election night
+  startElection: function () {
+    console.log("in game.startElection");
+    $("header>span").text("Welcome to Election Night 2020");
+    $("#front-runner-top>span").text("Incumbent");
+    // $("#trump").removeClass("trump-white-house");
+
+    // userInterface.moveBadge("trump","front-runner");
+    $("#challenger-top>span").text("Nominee");
+    userInterface.displayNewsFeed("Last hour before polls close - this is your final push.");
+    $("#duel>span").text("Battle Onward");
+  },
+
+  // election has been won
+  electionWon: function () {
+    console.log("in game.electionWon");
+    var blurb = "Congradulations!  " + capitolizeWord(game.playerCandidateId) + " has won the 2020 election.  Play again?"
+    userInterface.displayNewsFeed(blurb);
+    userInterface.moveBadge(game.opponentId,"challenger");
+    userInterface.moveBadge(game.playerCandidateId,"front-runner");
+    $("#front-runner-top>span").text("President Elect");
+    $("#challenger-top>span").text("Outgoing President");
+    $("#challenger-top").addClass("outgoing-prez");
+    game.currentGameState = 'restart';
+    $("#duel>span").text("Play Again");
+  },
+
+  // election has been lost
+  electionLost: function () {
+    console.log("in game.electionLost");
+    var blurb = "Trump becomes a two-term President winning the 2020 election.  Play again?"
+    userInterface.displayNewsFeed(blurb);
+    $("#front-runner-top>span").text("President Elect");
+    $("#challenger-top>span").text("Losing Nominee");
+    $("#challenger-top").addClass("outgoing-prez");
+    game.currentGameState = 'restart';
+    $("#duel>span").text("Play Again");
+  },
 
 };
 
@@ -238,16 +358,6 @@ var userInterface = {
   // initialize the display
   initDisplay: function() {
     console.log("in userInterface.initDisplay");
-    // turn word color to white as previous game result
-    // will have set it to red of player did not guess the word
-    // wordDisplayElement.style.color = "#ffffff"; 
-    // userInterface.displayWordElement();
-    // userInterface.hideTermDisplayElement();
-    // userInterface.displayUsedLettersElement();
-    // userInterface.displayGuessRemainingElement();
-    // userInterface.displayWinCountElement();
-    // userInterface.displayLossCountElement();
-    // userInterface.displayMessageElement("use keys a through z");
   },  
 
   // move a candidate badge from one div to another
@@ -290,12 +400,11 @@ var userInterface = {
     var blurb = 'Are you ready to do political battle with ' +
                 capitolizeWord(targetId) +
                 '?  Use Campaign Against button';
+    $("#duel>span").text("Campaign Against");
     userInterface.displayNewsFeed(blurb);
     userInterface.toggleActionButtonVisibility('show');
   },
   
-
-
 
   // move remaining candidates to Contenders box 
   moveCandidatesToContendersBox: function() {
@@ -349,13 +458,7 @@ var userInterface = {
 // -------------------------------------------------------------------
 //  *** Start of game flow *** 
 // -------------------------------------------------------------------
-
 game.startGame();
-
-
-
-    
-
 
 // for (let i = 0; i < candidate.candidateProfile.length; i++) {
 //   console.log("index = " + i);
@@ -378,6 +481,8 @@ $(".candidate").on("click", function() {
   if (candidate.candidateIsMovable[candidate.candidateName.indexOf(badgeId)]) {
     switch (game.currentGameState) {
       case "pick-candidate": {
+        $("#contenders-top").css("visibility","visible");
+        $("#contenders").css("visibility","visible");
         userInterface.moveCandidateToFrontRunnerBox(badgeId);
         userInterface.moveCandidatesToContendersBox();
         game.currentGameState = 'pick-opponent';
@@ -390,13 +495,6 @@ $(".candidate").on("click", function() {
         userInterface.diagnosticDump();
         break;
       }      
-      // case "campaign": {
-      //   game.executeTurn();
-      //   userInterface.moveChallengerToDustBinBox(badgeId);
-      //   game.currentGameState = 'pick-opponent';
-      //   break;
-      // } 
-    
       default:
         break;
     };
@@ -405,21 +503,32 @@ $(".candidate").on("click", function() {
 
 // click event for action button
 $("#duel").on("click", function() {
-  console.log("in on.click .duel")
- 
+  console.log("in on.click .duel");
+  userInterface.diagnosticDump();
   switch (game.currentGameState) {
     case "campaign": {
       game.executeTurn();
-      // forcing wins to test story board at this time
-      userInterface.moveCandidateToDustbinBox(game.opponentId);
-      game.currentGameState = 'pick-opponent';
       break;
     }
     case "campaign-won": {
       game.preElection();
       game.currentGameState = 'pre-election-night';
       break;
-    }      
+    }       
+    case "pre-election-night": {
+      game.startElection();
+      game.currentGameState = 'election-night';
+      break;
+    } 
+    case "election-night": {
+      game.executeElectionTurn();
+      break;
+    } 
+    case "restart": {
+      game.resetGame();
+      game.startGame();
+      break;
+    } 
 
   
     default:
@@ -429,26 +538,3 @@ $("#duel").on("click", function() {
 
 });
 
-
-  // var targetDivId = "contenders";
-  // userInterface.moveBadge(badgeId, targetDivId);
-  // this is great - next step is to fill out detail
-  // need to have awareness of the game state
-  // and what candidate was clicked so move or not move
-  // decisions can be made 
-  // Looking at game state will allow the correct target div
-  // to be choosen.
-  // There is also some class work to be done as candidates
-  // in the Front-Runner and Challenger box need some CSS
-  // to center with in the Div, but this is not desirable
-  // in the Contenders and Candiates(Dustbin) holding pens
-  // Finally there are times outside of this click where 
-  // we want to automatically move candidates around:
-  // candiates to contenders pen; "loser" to the Dustbin.
-  // in those cases we are no responding to a click event
-  // so maybe the moveBadge function is best kept using
-  // the id seletor as parameters instead of actual candidate object
-  // returned from $(this) in the click event function
-
-
-// userInterface.toggleActionButtonVisibility("show");
