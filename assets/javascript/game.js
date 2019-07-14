@@ -244,7 +244,7 @@ var candidate = {
   // this is the profile attack array
   buildAttackArray: function() {
     for ( i = 0; i < 8; i++) {
-      this.profileAttack[i] = randomIntFromInterval(1,6);
+      this.profileAttack[i] = randomIntFromInterval(2,7);  // reset this to 1,6
     }
   },
 
@@ -310,7 +310,7 @@ var candidate = {
       console.log("candidate base def : " + candidate.candidateBaseDefense[i]);
       console.log("candidate current off : " + candidate.candidateCurrentOffense[i]);
      }
-    userInterface.diagnosticDump();
+    // userInterface.diagnosticDump();
   }
 
 
@@ -329,11 +329,13 @@ var game = {
   opponentId: "",
   turnResult: "",
   opponentsRemaining: 7,
+  isElectionNight: false,
 
   // game start up procedure
+  // as of 7-13 this is deprecated / can be removed
   startGame: function() {
     console.log("in game.startGame");
-    userInterface.diagnosticDump();
+    // userInterface.diagnosticDump();
     $("#contenders-top").css("visibility","hidden");
     $("#contenders").css("visibility","hidden");
     userInterface.displayNewsFeed('Welcome to the campaign for the 2020 Democratic Nomination.  Choose yourself a candidate by clicking one');
@@ -341,6 +343,7 @@ var game = {
   },
 
   // restart a game
+  // as of 7-13 this the game start & restart
   resetGame: function() {
     console.log("in game.resetGame");
 
@@ -350,11 +353,12 @@ var game = {
     userInterface.displayNewsFeed('Welcome to the campaign for the 2020 Democratic Nomination.  Choose yourself a candidate by clicking one');
     // 
 
-    userInterface.diagnosticDump();
+    // userInterface.diagnosticDump();
     playerCandidateId = "";
     opponentId = "";
     turnResult = "";
     game.opponentsRemaining = 7;
+    game.isElectionNight = false;
     $("#back-ground").attr("src","assets/images/demoFloor.jpg");
     $("#dustbin-top>span").text('Candidates');
     userInterface.toggleActionButtonVisibility("hide");
@@ -374,7 +378,7 @@ var game = {
     $("#header>span").text("Road to 2020 - Democratic Showdown");
     candidate.setCandidateStats();
     game.currentGameState = 'pick-candidate';
-    userInterface.diagnosticDump();
+    // userInterface.diagnosticDump();
   },
 
   // perform game turn 
@@ -421,18 +425,28 @@ var game = {
     } 
     // either you lost round or battle not finished yet
     else if (this.turnResult === "loss") {
-      console.log("in game.executeTurn - round was lost");
+              console.log("in game.executeTurn - round was lost");
               game.campaignLost();
             }
          else if (this.turnResult === "continue") {
+          //  round is not over yet
           console.log("in game.executeTurn - rounds continue");
           var blurb = "You dropped " + roundResult.first + "%  " + capitolizeWord(game.opponentId) + " dropped " + roundResult.second +"%.  Continue campaign"
           userInterface.displayNewsFeed(blurb);
-          //  round is not over yet
          }
+              else if (this.turnResult === "election-win") {
+                  //  this is an election win
+                  game.electionWon();
+              }
+                   else if (this.turnResult === "election-loss") {
+                    //  this is an "election-loss"
+                    game.electionLost();
+                   };
   },
 
   // perform election turn 
+  //  next goal is to move this logic into the executeTurn using additional turnResult
+  //  values to control flow
   executeElectionTurn: function () {
     console.log("in game.executeElectionTurn");
     // forcing win during initial testing
@@ -451,8 +465,18 @@ var game = {
   console.log("in game.campaignLost");
   userInterface.moveCandidateToDustbinBox(this.playerCandidateId);
   // userInterface.moveBadge(this.opponentId,"front-runner");
-  var blurb = "Your favorables have sunk, you are broke and have to withdrawal from the race." 
-  + "  Do you want to play again?"
+  // if you both hit zero you lose
+  if (candidate.candidateHealth[candidate.candidateName.indexOf(game.opponentId)] === 0) {
+    var blurb = "Virtual Tie, " + capitolizeWord(game.playerCandidateId) + ".  But floor convention backs your opponent. Play again?"
+    userInterface.displayNewsFeed(blurb);
+  } 
+  else {
+    var blurb = "Your favorables have sunk, you are broke and have to withdrawal from the race." 
+    + "  Do you want to play again?";
+    userInterface.displayNewsFeed(blurb);
+  };
+
+
   game.currentGameState = 'restart';
   userInterface.displayNewsFeed(blurb);
   $("#duel>span").text("Play Again");
@@ -468,7 +492,7 @@ var game = {
     $("#front-runner-top>span").text("Incumbent");
     $("#challenger-top>span").text("Nominee");
     userInterface.displayNewsFeed("Trump vs " + capitolizeWord(this.playerCandidateId)
-                          + ".  Polls showing a toss-up.  Start your final efforts.");
+                          + ".  Polls showing a toss-up.  You feel re-energized! Favorables are up!");
     $("#duel>span").text("Final Campaigning");
     $("#contenders-top").css("visibility","hidden");
     $("#contenders").css("visibility","hidden");
@@ -480,6 +504,43 @@ var game = {
     $("#" + game.opponentId).css("visibility","visible");   
     userInterface.moveBadge(game.opponentId,"front-runner"); 
     $("#" + game.opponentId).addClass("cand-in-upper-box")
+    game.isElectionNight = true;
+    // refresh the nominee
+    // make health = health * 3 up to limit of 80%
+    var newHealth = candidate.candidateHealth[candidate.candidateName.indexOf(game.playerCandidateId)] * 3;
+    if (newHealth > 80 ) {
+      newHealth = 80;
+      candidate.candidateHealth[candidate.candidateName.indexOf(game.playerCandidateId)] = newHealth;
+    } 
+    else {
+      candidate.candidateHealth[candidate.candidateName.indexOf(game.playerCandidateId)] = newHealth;
+    };
+    // reset offensive attack to 3 * the base rate
+    console.log("nominee: base off: " + 
+    candidate.candidateBaseOffense[candidate.candidateName.indexOf(game.playerCandidateId)] );
+    console.log("nominee: curr off: " + 
+    candidate.candidateCurrentOffense[candidate.candidateName.indexOf(game.playerCandidateId)] );
+    
+    candidate.candidateCurrentOffense[candidate.candidateName.indexOf(game.playerCandidateId)] = 
+    candidate.candidateBaseOffense[candidate.candidateName.indexOf(game.playerCandidateId)] * 3;
+
+    console.log("nominee: base off: " + 
+    candidate.candidateBaseOffense[candidate.candidateName.indexOf(game.playerCandidateId)] );
+    console.log("nominee: curr off: " + 
+    candidate.candidateCurrentOffense[candidate.candidateName.indexOf(game.playerCandidateId)] );
+
+    // position Trump into candidate array
+    // compute a base defense
+    var trumpDefense = randomIntFromInterval(5,9);
+    var trumpHealth  = randomIntFromInterval(45,75);
+    candidate.candidateBaseOffense[candidate.candidateName.indexOf(game.opponentId)] = 0;
+    candidate.candidateCurrentOffense[candidate.candidateName.indexOf(game.opponentId)] = 0;
+    candidate.candidateBaseDefense[candidate.candidateName.indexOf(game.opponentId)] = trumpDefense;
+    candidate.candidateHealth[candidate.candidateName.indexOf(game.opponentId)] = trumpHealth;
+
+    userInterface.updatePrintableFavorables(game.playerCandidateId);
+    userInterface.updatePrintableFavorables(game.opponentId);  
+    userInterface.diagnosticDump();
   },
 
   // start the election night
@@ -498,8 +559,15 @@ var game = {
   // election has been won
   electionWon: function () {
     console.log("in game.electionWon");
-    var blurb = "Congradulations!  " + capitolizeWord(game.playerCandidateId) + " has won the 2020 election.  Play again?"
-    userInterface.displayNewsFeed(blurb);
+    if (candidate.candidateHealth[candidate.candidateName.indexOf(game.playerCandidateId)] === 0) {
+      var blurb = "Hanging Chads " + capitolizeWord(game.playerCandidateId) + " Supreme Courts decides - you have won the 2020 election.  Play again?"
+      userInterface.displayNewsFeed(blurb);
+    } 
+    else {
+      var blurb = "Congradulations!  " + capitolizeWord(game.playerCandidateId) + " has won the 2020 election.  Play again?"
+      userInterface.displayNewsFeed(blurb);
+    };
+
     userInterface.moveBadge(game.opponentId,"challenger");
     userInterface.moveBadge(game.playerCandidateId,"front-runner");
     $("#front-runner-top>span").text("President Elect");
@@ -512,8 +580,14 @@ var game = {
   // election has been lost
   electionLost: function () {
     console.log("in game.electionLost");
-    var blurb = "Trump becomes a two-term President winning the 2020 election.  Play again?"
-    userInterface.displayNewsFeed(blurb);
+    if (candidate.candidateHealth[candidate.candidateName.indexOf(game.opponentId)] === 0) {
+      var blurb = "Hanging Chads " + capitolizeWord(game.playerCandidateId) + " Supreme Courts decides - Trump wins 2020 election.  Play again?"
+      userInterface.displayNewsFeed(blurb);
+    } 
+    else {
+      var blurb = "Trump becomes a two-term President winning the 2020 election.  Play again?"
+      userInterface.displayNewsFeed(blurb);
+    };
     $("#front-runner-top>span").text("President Elect");
     $("#challenger-top>span").text("Losing Nominee");
     $("#challenger-top").addClass("outgoing-prez");
@@ -530,6 +604,7 @@ var game = {
     console.log("defender is : " + capitolizeWord(defenderId));
     console.log("defender def: " + candidate.candidateBaseDefense[candidate.candidateName.indexOf(defenderId)]);
     console.log("defender health: " + candidate.candidateHealth[candidate.candidateName.indexOf(defenderId)]);
+    console.log("is this Election night: " + this.isElectionNight);
 
     // assign impact
     // save what this attack's results will be 
@@ -562,16 +637,31 @@ var game = {
 
     // determine attack result in terms of attacker:  win, loss, continue
     if (candidate.candidateHealth[candidate.candidateName.indexOf(attackerId)] === 0) {
-      return { first: damageToAttacker, second: damageToDefender, third: "loss"};
+      if (this.isElectionNight) {
+        // election night loss
+        return { first: damageToAttacker, second: damageToDefender, third: "election-loss"}
+      }
+      else {
+        // democratic nomination loss
+        return { first: damageToAttacker, second: damageToDefender, third: "loss"}
+      }
     }
     else {
           if (candidate.candidateHealth[candidate.candidateName.indexOf(defenderId)] === 0) {
-              return { first: damageToAttacker, second: damageToDefender, third: "win"};
+            if (this.isElectionNight) {
+              // this is election night win
+              return { first: damageToAttacker, second: damageToDefender, third: "election-win"}
+            }
+            else {
+              // this is democratic campaign win
+              return { first: damageToAttacker, second: damageToDefender, third: "win"}
+            }
           } 
           else { 
-            return { first: damageToAttacker, second: damageToDefender, third: "continue"};
+            // this means continue the battle - this is for either election night or for campaign
+              return { first: damageToAttacker, second: damageToDefender, third: "continue"}
               }
-      };
+      }
   }
 };
 
@@ -675,12 +765,12 @@ var userInterface = {
 
   // diagnostic output to console
   diagnosticDump: function() {
-    // console.log("------------------------")
-    // console.log("in userInterface.diagnosticDump"); 
-    // console.log("player candidate: " + game.playerCandidateId);
-    // console.log("opponent:" + game.opponentId);
-    // console.log("game state: " + game.currentGameState);
-    // console.log("opponents remaining: " + game.opponentsRemaining);
+    console.log("------------------------")
+    console.log("in userInterface.diagnosticDump"); 
+    console.log("player candidate: " + game.playerCandidateId);
+    console.log("opponent:" + game.opponentId);
+    console.log("game state: " + game.currentGameState);
+    console.log("opponents remaining: " + game.opponentsRemaining);
     // console.log("player health :" + candidate.candidateHealth[candidate.candidateName.indexOf(game.playerCandidateId)]);
     // console.log("player curr off :" + candidate.candidateCurrentOffense[candidate.candidateName.indexOf(game.playerCandidateId)]);
     // console.log("player base off :" + candidate.candidateBaseOffense[candidate.candidateName.indexOf(game.playerCandidateId)]);
@@ -689,51 +779,20 @@ var userInterface = {
     // console.log("opponent curr off :" + candidate.candidateCurrentOffense[candidate.candidateName.indexOf(game.opponentId)]);
     // console.log("opponent base off :" + candidate.candidateBaseOffense[candidate.candidateName.indexOf(game.opponentId)]);
     // console.log("opponent base def :" + candidate.candidateBaseDefense[candidate.candidateName.indexOf(game.opponentId)]);
+    console.log("length is: " + candidate.candidateHealth.length);
+    for (let i = 0; i < candidate.candidateHealth.length; i++) {
+      console.log("candidate name : " + candidate.candidateName[i]);
+      console.log("candidate health : " + candidate.candidateHealth[i]);
+      console.log("candidate base off : " + candidate.candidateBaseOffense[i]);
+      console.log("candidate base def : " + candidate.candidateBaseDefense[i]);
+      console.log("candidate current off : " + candidate.candidateCurrentOffense[i]);
+     };
  
-    // console.log("------------------------")
+    console.log("------------------------")
   }
 };
 
 
-// ---------------------------------------------------------
-// Core Program Flow & Event Listeners:
-// ---------------------------------------------------------
-
-// -------------------------------------------------------------------
-//  *** Start of game flow *** 
-// -------------------------------------------------------------------
-
-
-// candidate.buildProfileArray();
-// for (i = 0; i < 8; i++) {
-//   console.log("profile type" + i + " is " + candidate.profileType[i]);
-// };
-
-// candidate.buildHealthArray();
-// for (i = 0; i < 8; i++) {
-//   console.log("profile health" + i + " is " + candidate.profileHealth[i]);
-// };
-
-// candidate.buildAttackArray();
-// for (i = 0; i < 8; i++) {
-//   console.log("profile attack" + i + " is " + candidate.profileAttack[i]);
-// };
-
-// candidate.buildDefenseArray();
-// for (i = 0; i < 8; i++) {
-//   console.log("profile defense" + i + " is " + candidate.profileDefense[i]);
-// };
-
-
-
-
-// for (let i = 0; i < 8; i++) {
-//   console.log("candidate name : " + candidate.candidateName[i]);
-//   console.log("candidate health : " + candidate.candidateHealth[i]);
-//   console.log("candidate base off : " + candidate.candidateBaseOffense[i]);
-//   console.log("candidate base def : " + candidate.candidateBaseDefense[i]);
-//   console.log("candidate current off : " + candidate.candidateCurrentOffense[i]);
-//  }
 
 
 
@@ -742,15 +801,6 @@ var userInterface = {
 game.resetGame();
 
 
-// for (let i = 0; i < candidate.candidateProfile.length; i++) {
-//   console.log("index = " + i);
-//   console.log("name = " + candidate.candidateProfile[i].name);
-//   console.log("is active = " + candidate.candidateProfile[i].isActive);
-  // console.log("base offense = " + candidate.candidateProfile[i].baseOffense);
-  // console.log("current offense = " + candidate.candidateProfile[i].currentOffense);
-  // console.log("base defense = " + candidate.candidateProfile[i].baseDefense);
-  // console.log("health = " + candidate.candidateProfile[i].health);
-// };
 
 
 // click event for candidate badges
@@ -768,13 +818,13 @@ $(".candidate").on("click", function() {
         userInterface.moveCandidateToFrontRunnerBox(badgeId);
         userInterface.moveCandidatesToContendersBox();
         game.currentGameState = 'pick-opponent';
-        userInterface.diagnosticDump();
+        // userInterface.diagnosticDump();
         break;
       }
       case "pick-opponent": {
         userInterface.moveContenderToChallengerBox(badgeId);
         game.currentGameState = 'campaign';
-        userInterface.diagnosticDump();
+        // userInterface.diagnosticDump();
         break;
       }      
       default:
@@ -786,7 +836,7 @@ $(".candidate").on("click", function() {
 // click event for action button
 $("#duel").on("click", function() {
   console.log("in on.click .duel");
-  userInterface.diagnosticDump();
+  // userInterface.diagnosticDump();
   switch (game.currentGameState) {
     case "campaign": {
       game.executeTurn();
@@ -799,13 +849,24 @@ $("#duel").on("click", function() {
     }       
     case "pre-election-night": {
       game.startElection();
-      game.currentGameState = 'election-night';
+      game.currentGameState = 'campaign' //'election-night';
       break;
     } 
-    case "election-night": {
-      game.executeElectionTurn();
-      break;
-    } 
+    // need to change this so it flows thru executeTurn
+    // will need a boolean so we know it is the election
+    // round and will need to refresh the nominee to they
+    // they can win or lose - probably take existing health * 3
+    // and reset their attack rating
+    // will also have to populate Trumps stats and 
+    // push it into a ninth position on the candidate arrays
+    // so that existing logic for managing the battle round 
+    // can be used almost as-is
+    // 
+    // case "election-night": {
+    //   // game.executeElectionTurn();
+    //   game.currentGameState = 'campaign';
+    //   break;
+    // } 
     case "restart": {
       game.resetGame();
       game.startGame();
