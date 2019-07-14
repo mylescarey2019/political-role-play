@@ -17,7 +17,7 @@ be able to win and high level character should be able to lose
 That is the case with this implementation, but given that in this game you
 face 7 oponents versus 3 in the demo achieving the above is more complex.
 
-I have take measures to add variablity in the characters.  I low hit point (Health)
+I have take measures to add variablity in the characters.  A low hit point (Health)
 one might have a strong counter attack and high hit point one might have low counter attack.
 The characters have a general range of health in bell curve.
 

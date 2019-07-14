@@ -42,8 +42,8 @@ player attack rating goes up with each attack
 when choosing opponent know that low Heath character could have a strong attack rating
 and high Health character could have weak attack rating so there is some variablity.
 Road to victory is generally picking low Health opponents first.
-Also know when choosing your character that a low Health one would win the game (sometimes)
-if played well and if chance fall right.  Likewise a high Health character doesn't
+Also know when choosing your character that a low Health one could win the game (sometimes)
+if played well and if chance falls right.  Likewise a high Health character doesn't
 guarenteed you will make to the general election.
 See requirement note in [UseCases and Psuedo Code](UseCases-PsuedoCode.md)for more details
 
@@ -62,4 +62,4 @@ mylescarey2019@gmail.com
 
 ## Acknowledgments
 
-Thanks to beta testers - my 15yo & 17 daughters and wife 
+Thanks to beta testers - my 15yo & 17yo daughters and wife 
