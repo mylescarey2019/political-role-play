@@ -203,8 +203,8 @@ var candidate = {
   attackMax: 0,
   defenseMin: 0,
   defenseMax: 0,
-  lowFactorAdjust: 0,
-  highFactorAdjust: 0,
+  lowFactorAdjustUp: 0,
+  highFactorAdjustDown: 0,
   lowFactorAdjustDown: 0,
 
   // game character profile tuning ideas
@@ -292,30 +292,32 @@ var candidate = {
     // test 2:  but maybe it will also help higher % candidates too much 
 
     // reset factors for the player if they advance to the bonus round
-    candidate.electionHealthResetFactor = 2.5,
+    candidate.electionHealthResetFactor = 2.3,
     candidate.electionOffenseResetFactor = 1.8,
     candidate.attackMin = 2,
     candidate.attackMax = 7,
     candidate.defenseMin = 1,
     candidate.defenseMax = 8,
-    candidate.lowFactorAdjust = 2,
-    candidate.lowFactorAdjustDown = -2,
-    candidate.highFactorAdjust = -1
+    candidate.lowFactorAdjustUp = 3,
+    candidate.lowFactorAdjustDown = -3,
+    candidate.highFactorAdjustDown = -2
   },
 
   // this is the profile attack array
   buildAttackArray: function() {
     console.log("in candidates.buildAttackArray");
     for ( i = 0; i < 8; i++) {
+      // high health gets a sligthly lower attack
       if (this.profileType[i] === 'a' || this.profileType[i] === 'a-') {
         // var attackMod = this.attackMax  + this.highFactorAdjust
-        console.log('a: ' + i + " " + this.attackMin + " " + (this.attackMax + this.highFactorAdjust));
-        this.profileAttack[i] = randomIntFromInterval(this.attackMin,this.attackMax + this.highFactorAdjust); 
+        console.log('a: ' + i + " " + this.attackMin + " " + (this.attackMax + this.highFactorAdjustDown));
+        this.profileAttack[i] = randomIntFromInterval(this.attackMin,this.attackMax + this.highFactorAdjustDown); 
       }
+      // low heath gets a slightly higher attack
       else if (this.profileType[i] === 'd' || this.profileType[i] === 'd-') {
         // var attackMod = this.attackMax + this.lowFactorAdjust;
-        console.log('d: ' + i + " " + this.attackMin + " " + (this.attackMax + this.lowFactorAdjust));
-        this.profileAttack[i] = randomIntFromInterval(this.attackMin,this.attackMax + this.lowFactorAdjust); 
+        console.log('d: ' + i + " " + this.attackMin + " " + (this.attackMax + this.lowFactorAdjustUp));
+        this.profileAttack[i] = randomIntFromInterval(this.attackMin,this.attackMax + this.lowFactorAdjustUp); 
       } 
       else {
         this.profileAttack[i] = randomIntFromInterval(this.attackMin,this.attackMax); 
@@ -329,8 +331,8 @@ var candidate = {
     for ( i = 0; i < 8; i++) {
       // high health get slightly lower defense
       if (this.profileType[i] === 'a' || this.profileType[i] === 'a-') {
-        console.log('a: ' + i + " " + this.defenseMin + " " + (this.defenseMax + this.highFactorAdjust));
-        this.profileDefense[i] = randomIntFromInterval(this.defenseMin,this.defenseMax + this.highFactorAdjust); 
+        console.log('a: ' + i + " " + this.defenseMin + " " + (this.defenseMax + this.highFactorAdjustDown));
+        this.profileDefense[i] = randomIntFromInterval(this.defenseMin,this.defenseMax + this.highFactorAdjustDown); 
       } 
       // low health get slightly lower defense
       else if (this.profileType[i] === 'd' || this.profileType[i] === 'd-') {
