@@ -205,6 +205,7 @@ var candidate = {
   defenseMax: 0,
   lowFactorAdjust: 0,
   highFactorAdjust: 0,
+  lowFactorAdjustDown: 0,
 
   // game character profile tuning ideas
   // starting with:
@@ -243,35 +244,35 @@ var candidate = {
       // assign value with a varience
       switch (this.profileType[i]) {
         case 'a': {  
-          this.profileHealth[i] = 70 + randomIntFromInterval(-8,3);
+          this.profileHealth[i] = 70 + randomIntFromInterval(-5,3);
           break;
         }
         case 'a-': {  
-          this.profileHealth[i] = 65 + randomIntFromInterval(-7,3);
+          this.profileHealth[i] = 65 + randomIntFromInterval(-5,3);
           break;
         }
         case 'b': {  
-          this.profileHealth[i] = 60 + randomIntFromInterval(-6,2);
+          this.profileHealth[i] = 60 + randomIntFromInterval(-3,2);
           break;
         }
         case 'b-': {  
-          this.profileHealth[i] = 55 + randomIntFromInterval(-6,2);
+          this.profileHealth[i] = 55 + randomIntFromInterval(-3,2);
           break;
         }
         case 'c': {  
-          this.profileHealth[i] = 50 + randomIntFromInterval(-5,5);
+          this.profileHealth[i] = 50 + randomIntFromInterval(-1,1);
           break;
         }
         case 'c-': {  
-          this.profileHealth[i] = 45 + randomIntFromInterval(-4,5);
+          this.profileHealth[i] = 45 + randomIntFromInterval(-1,1);
           break;
         }
         case 'd': {  
-          this.profileHealth[i] = 40 + randomIntFromInterval(-4,6);
+          this.profileHealth[i] = 40 + randomIntFromInterval(-1,2);
           break;
         }
         case 'd-': {  
-          this.profileHealth[i] = 35 + randomIntFromInterval(0,11);
+          this.profileHealth[i] = 35 + randomIntFromInterval(1,2);
           break;
         }
         default:
@@ -298,6 +299,7 @@ var candidate = {
     candidate.defenseMin = 1,
     candidate.defenseMax = 8,
     candidate.lowFactorAdjust = 2,
+    candidate.lowFactorAdjustDown = -2,
     candidate.highFactorAdjust = -1
   },
 
@@ -305,14 +307,14 @@ var candidate = {
   buildAttackArray: function() {
     console.log("in candidates.buildAttackArray");
     for ( i = 0; i < 8; i++) {
-      if (this.profileType[i] === 'a' || this.profileType === 'a-') {
+      if (this.profileType[i] === 'a' || this.profileType[i] === 'a-') {
         // var attackMod = this.attackMax  + this.highFactorAdjust
-        console.log('a: ' + this.attackMin + " " + (this.attackMax + this.highFactorAdjust));
+        console.log('a: ' + i + " " + this.attackMin + " " + (this.attackMax + this.highFactorAdjust));
         this.profileAttack[i] = randomIntFromInterval(this.attackMin,this.attackMax + this.highFactorAdjust); 
       }
-      else if (this.profileType[i] === 'd' || this.profileType === 'd-') {
+      else if (this.profileType[i] === 'd' || this.profileType[i] === 'd-') {
         // var attackMod = this.attackMax + this.lowFactorAdjust;
-        console.log('d: ' + this.attackMin + " " + (this.attackMax + this.lowFactorAdjust));
+        console.log('d: ' + i + " " + this.attackMin + " " + (this.attackMax + this.lowFactorAdjust));
         this.profileAttack[i] = randomIntFromInterval(this.attackMin,this.attackMax + this.lowFactorAdjust); 
       } 
       else {
@@ -325,12 +327,17 @@ var candidate = {
   buildDefenseArray: function() {
     console.log("in candidates.buildDefenseArray");
     for ( i = 0; i < 8; i++) {
-      if (this.profileType[i] === 'a' || this.profileType === 'a') {
-        console.log('a: ' + this.defenseMin + " " + (this.defenseMax + this.highFactorAdjust));
+      // high health get slightly lower defense
+      if (this.profileType[i] === 'a' || this.profileType[i] === 'a-') {
+        console.log('a: ' + i + " " + this.defenseMin + " " + (this.defenseMax + this.highFactorAdjust));
         this.profileDefense[i] = randomIntFromInterval(this.defenseMin,this.defenseMax + this.highFactorAdjust); 
       } 
-      else {
-        this.profileDefense[i] = randomIntFromInterval(this.defenseMin,this.defenseMax); 
+      // low health get slightly lower defense
+      else if (this.profileType[i] === 'd' || this.profileType[i] === 'd-') {
+            console.log('d: ' + i + " " + this.defenseMin + " " + (this.defenseMax + this.lowFactorAdjustDown));
+            this.profileDefense[i] = randomIntFromInterval(this.defenseMin,this.defenseMax + this.lowFactorAdjustDown); 
+      } else {
+            this.profileDefense[i] = randomIntFromInterval(this.defenseMin,this.defenseMax); 
       }
     }
   },
@@ -563,8 +570,8 @@ var game = {
       newHealth = 80;
       candidate.candidateHealth[candidate.candidateName.indexOf(game.playerCandidateId)] = newHealth;
     } 
-    else if (newHealth < 30) {
-          newHealth = 30;
+    else if (newHealth < 35) {
+          newHealth = 35;
           candidate.candidateHealth[candidate.candidateName.indexOf(game.playerCandidateId)] = newHealth;
         }
         else {
