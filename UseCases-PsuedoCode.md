@@ -29,7 +29,7 @@ And yes a high level character can lose even if starting out against low level o
 
 Finally - this design features the main campaign and then a bonus boss round in the form
 of the general 2010 Election against the sitting president. If making it this round 
-it was necessary to refresh the player's heath refreshed a bit and attack rating reset a bit.
+it was necessary to refresh the player's heath a bit and attack rating reset a bit.
 This allows for a compelling/competive bonus round.
 
 Tuning can be easily futher adjusted during code refactoring if further testing determines a need.
