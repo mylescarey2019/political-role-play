@@ -292,8 +292,8 @@ var candidate = {
     // test 2:  but maybe it will also help higher % candidates too much 
 
     // reset factors for the player if they advance to the bonus round
-    candidate.electionHealthResetFactor = 3,
-    candidate.electionOffenseResetFactor = 2.1,
+    candidate.electionHealthResetFactor = 2.5,
+    candidate.electionOffenseResetFactor = 1.8,
     candidate.attackMin = 2,
     candidate.attackMax = 7,
     candidate.defenseMin = 1,
@@ -565,13 +565,13 @@ var game = {
     game.isElectionNight = true;
     // refresh the nominee
     // make health = health * the election health reset factor up to limit of 80%
-    var newHealth = candidate.candidateHealth[candidate.candidateName.indexOf(game.playerCandidateId)] * candidate.electionHealthResetFactor;
+    var newHealth = Math.round(candidate.candidateHealth[candidate.candidateName.indexOf(game.playerCandidateId)] * candidate.electionHealthResetFactor);
     if (newHealth > 80 ) {
       newHealth = 80;
       candidate.candidateHealth[candidate.candidateName.indexOf(game.playerCandidateId)] = newHealth;
     } 
-    else if (newHealth < 35) {
-          newHealth = 35;
+    else if (newHealth < 33) {
+          newHealth = 33;
           candidate.candidateHealth[candidate.candidateName.indexOf(game.playerCandidateId)] = newHealth;
         }
         else {
@@ -596,8 +596,8 @@ var game = {
 
     // update Trump attributes in candidate array
     // compute a base defense and health
-    var trumpDefense = randomIntFromInterval(5,9);
-    var trumpHealth  = randomIntFromInterval(45,75);
+    var trumpDefense = randomIntFromInterval(6,10);
+    var trumpHealth  = randomIntFromInterval(46,76);
     candidate.candidateBaseOffense[candidate.candidateName.indexOf(game.opponentId)] = 0;
     candidate.candidateCurrentOffense[candidate.candidateName.indexOf(game.opponentId)] = 0;
     candidate.candidateBaseDefense[candidate.candidateName.indexOf(game.opponentId)] = trumpDefense;
@@ -652,7 +652,8 @@ var game = {
       var blurb = "Trump becomes a two-term President winning the 2020 election.  Play again?"
       userInterface.displayNewsFeed(blurb);
     };
-    $("#front-runner-top>span").text("President Elect");
+    $("#front-runner-top>span").text("President Re-Elect");
+    $("#front-runner-top").addClass("prez-re");
     $("#challenger-top>span").text("Losing Nominee");
     $("#challenger-top").addClass("outgoing-prez");
     game.currentGameState = 'restart';

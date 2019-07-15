@@ -64,8 +64,12 @@ body {
   border-radius: 5px 5px 0px 0px;
 }
 
-.outgoing-prez {
+.outgoing-prez  {
   font-size: 18px;
+}
+
+.prez-re {
+  font-size: 20px;
 }
 
 #challenger {
