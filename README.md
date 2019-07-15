@@ -18,6 +18,8 @@ A chance to play again is presented whenever the player has lost - either in the
 
 ![Democratic Nomination](assets/images/wireframe.png)
 
+![Election Night](assets/images/wireframe-election.png)
+
 ## Getting Started
 
 ### Dependencies
