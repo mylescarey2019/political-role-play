@@ -197,6 +197,15 @@ var candidate = {
   profileHealth: [],
   profileAttack: [],
   profileDefense: [],
+  electionHealthResetFactor: 0,
+  electionOffenseResetFactor: 0,
+  attackMin: 0,
+  attackMax: 0,
+  defenseMin: 0,
+  defenseMax: 0,
+  lowFactorAdjust: 0,
+  highFactorAdjust: 0,
+
   // game character profile tuning ideas
   // starting with:
   //   1. randomly build 8 profiles with type equating to Health number range
@@ -262,7 +271,7 @@ var candidate = {
           break;
         }
         case 'd-': {  
-          this.profileHealth[i] = 35 + randomIntFromInterval(-2,8);
+          this.profileHealth[i] = 35 + randomIntFromInterval(0,11);
           break;
         }
         default:
@@ -271,23 +280,67 @@ var candidate = {
     }
   },
 
+
+  //  establish tuning factors
+  setTuningFactors: function() {
+    console.log("in candidates.setTuningFactors");
+    // combinations tested with:
+    // test 1:  attack 2,7 defense 1,8 election health reset 3x, election offense reset 3x
+    // test 1:  the balance wasn't too bad, seemed pretty hard for low % candidate to win campaign
+    // test 2:  attack 2,8, defense 1,6  reset health 3x, reset offense 2x - trying this one to try and help lower % candidates
+    // test 2:  but maybe it will also help higher % candidates too much 
+
+    // reset factors for the player if they advance to the bonus round
+    candidate.electionHealthResetFactor = 3,
+    candidate.electionOffenseResetFactor = 2.1,
+    candidate.attackMin = 2,
+    candidate.attackMax = 7,
+    candidate.defenseMin = 1,
+    candidate.defenseMax = 8,
+    candidate.lowFactorAdjust = 2,
+    candidate.highFactorAdjust = -1
+  },
+
   // this is the profile attack array
   buildAttackArray: function() {
+    console.log("in candidates.buildAttackArray");
     for ( i = 0; i < 8; i++) {
-      this.profileAttack[i] = randomIntFromInterval(2,7);  // reset this to 1,6
+      if (this.profileType[i] === 'a' || this.profileType === 'a-') {
+        // var attackMod = this.attackMax  + this.highFactorAdjust
+        console.log('a: ' + this.attackMin + " " + (this.attackMax + this.highFactorAdjust));
+        this.profileAttack[i] = randomIntFromInterval(this.attackMin,this.attackMax + this.highFactorAdjust); 
+      }
+      else if (this.profileType[i] === 'd' || this.profileType === 'd-') {
+        // var attackMod = this.attackMax + this.lowFactorAdjust;
+        console.log('d: ' + this.attackMin + " " + (this.attackMax + this.lowFactorAdjust));
+        this.profileAttack[i] = randomIntFromInterval(this.attackMin,this.attackMax + this.lowFactorAdjust); 
+      } 
+      else {
+        this.profileAttack[i] = randomIntFromInterval(this.attackMin,this.attackMax); 
+      }
     }
   },
 
   // this is the profile defense array
   buildDefenseArray: function() {
+    console.log("in candidates.buildDefenseArray");
     for ( i = 0; i < 8; i++) {
-      this.profileDefense[i] = randomIntFromInterval(1,8);
+      if (this.profileType[i] === 'a' || this.profileType === 'a') {
+        console.log('a: ' + this.defenseMin + " " + (this.defenseMax + this.highFactorAdjust));
+        this.profileDefense[i] = randomIntFromInterval(this.defenseMin,this.defenseMax + this.highFactorAdjust); 
+      } 
+      else {
+        this.profileDefense[i] = randomIntFromInterval(this.defenseMin,this.defenseMax); 
+      }
     }
   },
+
+ 
 
   // assign profile so each of the candidates
   setCandidateStats: function() {
     console.log("in candidates.setCandidatesStats");
+    this.setTuningFactors();
     this.buildProfileArray();
     for (i = 0; i < 8; i++) {
       console.log("profile type " + i + " is " + candidate.profileType[i]);
@@ -365,7 +418,7 @@ var game = {
     // refactoring to not call startGame() - these were in startGame()
     $("#contenders-top").css("visibility","hidden");
     $("#contenders").css("visibility","hidden");
-    userInterface.displayNewsFeed('Welcome to the campaign for the 2020 Democratic Nomination.  Choose yourself a candidate by clicking one');
+    userInterface.displayNewsFeed('Welcome to the campaign for the 2020 Democratic Nomination.  Choose yourself a candidate');
 
     playerCandidateId = "";
     opponentId = "";
@@ -491,7 +544,7 @@ var game = {
     $("#challenger-top>span").text("Nominee");
     userInterface.displayNewsFeed("Trump vs " + capitolizeWord(this.playerCandidateId)
                           + ".  Polls showing a toss-up.  You feel re-energized! Favorables are up!");
-    $("#duel>span").text("Final Campaigning");
+    $("#duel>span").text("Final Campaign");
     $("#contenders-top").css("visibility","hidden");
     $("#contenders").css("visibility","hidden");
     $("#dustbin-top").css("visibility","hidden");
@@ -504,15 +557,20 @@ var game = {
     $("#" + game.opponentId).addClass("cand-in-upper-box")
     game.isElectionNight = true;
     // refresh the nominee
-    // make health = health * 3 up to limit of 80%
-    var newHealth = candidate.candidateHealth[candidate.candidateName.indexOf(game.playerCandidateId)] * 3;
+    // make health = health * the election health reset factor up to limit of 80%
+    var newHealth = candidate.candidateHealth[candidate.candidateName.indexOf(game.playerCandidateId)] * candidate.electionHealthResetFactor;
     if (newHealth > 80 ) {
       newHealth = 80;
       candidate.candidateHealth[candidate.candidateName.indexOf(game.playerCandidateId)] = newHealth;
     } 
-    else {
-      candidate.candidateHealth[candidate.candidateName.indexOf(game.playerCandidateId)] = newHealth;
-    };
+    else if (newHealth < 30) {
+          newHealth = 30;
+          candidate.candidateHealth[candidate.candidateName.indexOf(game.playerCandidateId)] = newHealth;
+        }
+        else {
+          candidate.candidateHealth[candidate.candidateName.indexOf(game.playerCandidateId)] = newHealth;
+        };
+    
     // reset offensive attack to 3 * the base rate
 
     // console.log("nominee: base off: " + 
@@ -520,8 +578,9 @@ var game = {
     // console.log("nominee: curr off: " + 
     // candidate.candidateCurrentOffense[candidate.candidateName.indexOf(game.playerCandidateId)] );
     
+    // make attack = base * the election attack reset factor
     candidate.candidateCurrentOffense[candidate.candidateName.indexOf(game.playerCandidateId)] = 
-    candidate.candidateBaseOffense[candidate.candidateName.indexOf(game.playerCandidateId)] * 3;
+    Math.round(candidate.candidateBaseOffense[candidate.candidateName.indexOf(game.playerCandidateId)] * candidate.electionOffenseResetFactor);
 
     // console.log("nominee: base off: " + 
     // candidate.candidateBaseOffense[candidate.candidateName.indexOf(game.playerCandidateId)] );
@@ -557,7 +616,7 @@ var game = {
     console.log("in game.electionWon");
     // if both reach zero - you win, but need different description
     if (candidate.candidateHealth[candidate.candidateName.indexOf(game.playerCandidateId)] === 0) {
-      var blurb = "Hanging Chads " + capitolizeWord(game.playerCandidateId) + " Supreme Courts decides - you have won the 2020 election.  Play again?"
+      var blurb = "Hanging Chads.   " + capitolizeWord(game.playerCandidateId) + ", Supreme Court decides - you have won the 2020 election.  Play again?"
       userInterface.displayNewsFeed(blurb);
     } 
     else {
@@ -579,7 +638,7 @@ var game = {
     console.log("in game.electionLost");
     // I think this if branch is unreachable because ties go down as a player win and this is the loss method
     if (candidate.candidateHealth[candidate.candidateName.indexOf(game.opponentId)] === 0) {
-      var blurb = "Hanging Chads " + capitolizeWord(game.playerCandidateId) + " Supreme Courts decides - Trump wins 2020 election.  Play again?"
+      var blurb = "Hanging Chads.  " + capitolizeWord(game.playerCandidateId) + ", Supreme Court decides - Trump wins 2020 election.  Play again?"
       userInterface.displayNewsFeed(blurb);
     } 
     else {
@@ -708,7 +767,7 @@ var userInterface = {
     $("#" + targetId).addClass('cand-in-upper-box');
     var blurb = 'Are you ready to do political battle with ' +
                 capitolizeWord(targetId) +
-                '?  Use Campaign Against button';
+                '?';
     $("#duel>span").text("Campaign Against");
     userInterface.displayNewsFeed(blurb);
     userInterface.toggleActionButtonVisibility('show');
@@ -725,7 +784,7 @@ var userInterface = {
     $("#dustbin-top>span").text('Political Dustbin');
     var blurb = 'Welcome to the campaign ' +
                 capitolizeWord(game.playerCandidateId) + 
-                '.' + '  Pick a challenger by clicking on one';
+                '.' + '  Pick a challenger';
     userInterface.displayNewsFeed(blurb);
   },
 

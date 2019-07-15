@@ -11,24 +11,28 @@ User picks candidate and battles one by one to win nomination.
 
 ## Requirement Note
 
-Game tuning - the demo requirment stated that a low level character should
+Game tuning - the demo requirment has 4 characters and stated that a low level character should
 be able to win and high level character should be able to lose
 
 That is the case with this implementation, but given that in this game you
-face 7 oponents versus 3 in the demo achieving the above is more complex.
+face 7 oponents versus achieving the above is more complex and required some tuning.
 
-I have take measures to add variablity in the characters.  A low hit point (Health)
-one might have a strong counter attack and high hit point one might have low counter attack.
-The characters have a general range of health in bell curve.
+I have take creative license in the game requirement to account for the added characterss
+adding some variablity in the characters, but the effect follows the spirit of the game requirements.
+A low hit point (Health) one might have a slightly stronger attack and high hit point one might have slightly lower attack.
+The characters have fit into general range of health the approximates a bell curve.
+Attack strength and counter attack has floor and ceilings with small randomness applied within
+the range at game start.
 
-So yes you can win with a low level character but not easily and not often.
-And yes a high level character can lose even if starting out against low level ones as
-they may run into a strong counter attacker.
+So yes you can win with a low level character but not easily and not all the time.
+And yes a high level character can lose even if starting out against low level ones.
 
 Finally - this design features the main campaign and then a bonus boss round in the form
-of the general 2010 Election against the sitting president. It was necessary if getting
-to this round to have the player's heath refreshed a bit and attack rating reset a bit
-to make for a compelling/competive bonus round.
+of the general 2010 Election against the sitting president. If making it this round 
+it was necessary to refresh the player's heath refreshed a bit and attack rating reset a bit.
+This allows for a compelling/competive bonus round.
+
+Tuning can be easily futher adjusted during code refactoring if further testing determines a need.
 
 
 ## User Stories / Use Cases
