@@ -27,7 +27,7 @@ A chance to play again is presented whenever the player has lost - either in the
 ### Installing
 
 * none necessary - use browser to play
-* 
+
 ### Executing program
 
 * open in browser and follow "News Feed" instructions
@@ -42,7 +42,7 @@ player badges show current "Favorable" % - this is their "Health" points
 player attack rating goes up with each attack
 when choosing opponent know that low Heath character could have a slightly stronger attack rating
 and high Health character could have slighly weaker attack rating - so there is some variablity.
-Road to victory is generally picking low Health opponents first.
+Road to victory is generally to attack low Health opponents first.
 But know when choosing your character that a low Health one could win the game (sometimes)
 if played well and if chance falls right.  Likewise a high Health character doesn't
 guarenteed you will make to the general election.
