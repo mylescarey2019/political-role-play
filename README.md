@@ -4,7 +4,7 @@ Role Playing Game - 2020 Democratic Nomination Campaign
 
 ## Description
 
-This is an HTML, CSS, javascript role playing "combat" style  game using the theme of the 2020 Democratic Nomination
+This is an HTML, CSS, javascript, JQuery(for all dynamic page activity) role playing "combat" style game using the theme of the 2020 Democratic Nomination.
 campaign and 2020 general election as a bonus round.
 The player chooses a candidate from eight choices and plays the whole game as that candidate.
 One by one the player faces off against the other candidates and campaigns to victory or loss against the current opponent.
@@ -14,6 +14,7 @@ A "News Feed" message box provides information and instructions during game play
 The player uses a multi-purpose button to move thru the "combat" rounds and advance from game page to the next.
 The player clicks on candidate images ("badges") to select their candidate and opponents.
 A chance to play again is presented whenever the player has lost - either in the nomination round or bonus round. 
+
 
 ![Democratic Nomination](assets/images/wireframe.png)
 
