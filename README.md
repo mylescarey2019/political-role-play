@@ -15,6 +15,8 @@ The player uses a multi-purpose button to move thru the "combat" rounds and adva
 The player clicks on candidate images ("badges") to select their candidate and opponents.
 A chance to play again is presented whenever the player has lost - either in the nomination round or bonus round. 
 
+## Deployed Page:
+https://mylescarey2019.github.io/unit-4-game/
 
 ![Democratic Nomination](assets/images/wireframe.png)
 
