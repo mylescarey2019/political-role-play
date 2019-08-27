@@ -16,7 +16,7 @@ The player clicks on candidate images ("badges") to select their candidate and o
 A chance to play again is presented whenever the player has lost - either in the nomination round or bonus round. 
 
 ## Deployed Page:
-https://mylescarey2019.github.io/unit-4-game/
+https://mylescarey2019.github.io/political-role-play/
 
 ![Democratic Nomination](assets/images/wireframe.png)
 
